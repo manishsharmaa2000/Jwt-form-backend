@@ -10,14 +10,14 @@ const app = express();
 
 // middleware
 app.use(cors({
-  origin:[
+  origin: [
     'http://localhost:5173',
     'http://localhost:5174',
-    'https://jwttokenproject.netlify.app'
+    'https://jwttokenproject.netlify.app',
+    'https://6a0c3def56b917009d2056e2--jwttokenproject.netlify.app'
   ],
   credentials: true
 }));
-
 app.use(express.json());
 
 // database connection
