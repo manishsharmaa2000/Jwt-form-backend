@@ -1,10 +1,13 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+
+
 
 const connectDB = require("./config/db");
 
-dotenv.config();
 
 const app = express();
 const  authRoutes  = require("./routes/authRoutes");
@@ -14,6 +17,7 @@ const blogRoutes = require("./routes/blogRoutes");
 
 // middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: function (origin, callback) {
