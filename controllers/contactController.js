@@ -1,6 +1,8 @@
 const Contact = require("../models/Contact");
 
-// Create Contact
+
+// CREATE CONTACT
+
 const createContact = async (req, res) => {
   try {
     const {
@@ -122,7 +124,10 @@ const createContact = async (req, res) => {
   }
 };
 
-// Get All Contacts
+
+// GET ALL CONTACTS
+
+
 const getAllContacts = async (
   req,
   res
@@ -146,7 +151,10 @@ const getAllContacts = async (
   }
 };
 
-// Get Contact By Id
+
+// GET CONTACT BY ID
+
+
 const getContactById = async (
   req,
   res
@@ -177,7 +185,169 @@ const getContactById = async (
   }
 };
 
-// Delete Contact
+
+// UPDATE CONTACT
+
+
+const updateContact = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      website,
+      address,
+      city,
+      state,
+      country,
+      postalCode,
+      link,
+    } = req.body;
+
+    const contact =
+      await Contact.findById(
+        req.params.id
+      );
+
+    if (!contact) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Contact Not Found",
+      });
+    }
+
+    // Validation Regex
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const phoneRegex =
+      /^[0-9]{10}$/;
+
+    const postalRegex =
+      /^[0-9]{5,6}$/;
+
+    const urlRegex =
+      /^(https?:\/\/)?([\w\-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+
+    // Required Fields Validation
+
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !address ||
+      !city ||
+      !state ||
+      !country ||
+      !postalCode
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "All required fields must be filled",
+      });
+    }
+
+    // Email Validation
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid Email Address",
+      });
+    }
+
+    // Phone Validation
+
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Phone Number must be 10 digits",
+      });
+    }
+
+    // Postal Code Validation
+
+    if (!postalRegex.test(postalCode)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid Postal Code",
+      });
+    }
+
+    // Website Validation
+
+    if (
+      website &&
+      !urlRegex.test(website)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid Website URL",
+      });
+    }
+
+    // Social Link Validation
+
+    if (
+      link &&
+      !urlRegex.test(link)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid Social Link",
+      });
+    }
+
+    const updatedContact =
+      await Contact.findByIdAndUpdate(
+        req.params.id,
+        {
+          name,
+          email,
+          phone,
+          website,
+          address,
+          city,
+          state,
+          country,
+          postalCode,
+          link,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Contact Updated Successfully",
+      data: updatedContact,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// DELETE CONTACT
+
+
 const deleteContact = async (
   req,
   res
@@ -209,9 +379,53 @@ const deleteContact = async (
   }
 };
 
+
+// HIDE / UNHIDE CONTACT
+
+
+const hideContact = async (
+  req,
+  res
+) => {
+  try {
+    const contact =
+      await Contact.findById(
+        req.params.id
+      );
+
+    if (!contact) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Contact Not Found",
+      });
+    }
+
+    contact.isHidden =
+      !contact.isHidden;
+
+    await contact.save();
+
+    res.status(200).json({
+      success: true,
+      message: contact.isHidden
+        ? "Contact Hidden Successfully"
+        : "Contact Unhidden Successfully",
+      data: contact,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createContact,
   getAllContacts,
   getContactById,
+  updateContact,
   deleteContact,
+  hideContact,
 };

@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const blogSchema = new mongoose.Schema(
+const testmonialSchema = new mongoose.Schema(
   {
-    heading: {
+    name: {
       type: String,
       required: true,
     },
@@ -14,9 +14,6 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
-      type: String,
-    },
      isHidden: {
       type: Boolean,
       default: false,
@@ -27,4 +24,4 @@ const blogSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Blog", blogSchema);
+module.exports = mongoose.model("Testmonial", testmonialSchema);

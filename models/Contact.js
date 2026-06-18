@@ -60,6 +60,10 @@ const contactSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+     isHidden: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
